@@ -9,4 +9,4 @@ services:
     environment:
       - 'POSTGRES_USER=sophia'
       - 'POSTGRES_DB=to_do'
-      - 'POSTGRES_PASSWORD=deamon'
+      - 'POSTGRES_PASSWORD=daemon'

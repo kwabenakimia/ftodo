@@ -1,5 +1,6 @@
 #[macro_use] extern crate diesel;
 extern crate dotenv;
+mod config;
 
 use actix_web::{App, HttpServer};
 use actix_service::Service;
