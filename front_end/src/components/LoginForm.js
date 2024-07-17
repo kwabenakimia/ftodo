@@ -5,11 +5,12 @@ class LoginForm extends Component {
     state = {
         username: "",
         password: "",
+        server_url: "https://automatic-space-umbrella-jggx9p6px57355qg-3000.app.github.dev/v1/auth/login"
     }
 
     submitLogin = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:8000/v1/auth/login', 
+        axios.post(this.state.server_url, 
             { 
                 "username": this.state.username,
                 "password": this.state.password
@@ -38,17 +39,25 @@ class LoginForm extends Component {
     }
 
     render() {
-        <form className="login" onSubmit={this.submitLogin}>
+        return (
+            <form className="login" onSubmit={this.submitLogin}>
 
-            <h1 className="login-title">Login</h1>
+                <h1 className="login-title">Login</h1>
 
-            <input type="text" className="login-input" 
-                placeholder="Username" 
-                autoFocus onChange={this.handleUsernameChange} 
-                value={this.state.username} />
-            <input type="submit" value="Lets Go" 
-            className="login-button" />
-        </form>
+                <input type="text" className="login-input" 
+                    placeholder="Username" 
+                    autoFocus onChange={this.handleUsernameChange} 
+                    value={this.state.username} />
+
+                <input type="password" className="login-input"
+                    placeholder="Password"
+                    onChange={this.handlepPasswordChange}
+                    value={this.state.password} />
+
+                <input type="submit" value="Lets Go" 
+                className="login-button" />
+            </form>
+        )
     }
 }
 
