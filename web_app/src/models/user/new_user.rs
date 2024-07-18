@@ -1,3 +1,4 @@
+use serde::de;
 use uuid::Uuid;
 use diesel::Insertable;
 use bcrypt::{DEFAULT_COST, hash};
@@ -5,6 +6,7 @@ use bcrypt::{DEFAULT_COST, hash};
 use crate::schema::users;
 
 #[derive(Insertable, Clone)]
+#[derive(Debug)]
 #[table_name = "users"]
 pub struct NewUser {
     pub username: String,
@@ -17,7 +19,7 @@ pub struct NewUser {
     pub fn new(username: String, email: String, password: String) -> Self {
         let hashed_password: String = hash(password.as_str(), DEFAULT_COST).unwrap();
         let uuid = Uuid::new_v4().to_string();
-        NewUser {
+        return NewUser {
             username,
             email,
             password: hashed_password,

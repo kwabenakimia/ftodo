@@ -1,3 +1,4 @@
+use actix_web::cookie::time::Date;
 use actix_web::dev::Payload;
 use actix_web::{Error, FromRequest, HttpRequest};
 use actix_web::error::ErrorUnauthorized;
@@ -8,12 +9,14 @@ use jsonwebtoken::{encode, decode, Header, Algorithm, Validation, EncodingKey, D
 
 use chrono::{Utc, DateTime};
 use chrono::serde::ts_seconds;
+use uuid::timestamp;
 use crate::config::Config;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JwToken {
     pub user_id: i32,
-    pub exp: usize,
+    #[serde(with = "ts_seconds")]
+    pub minted: DateTime<Utc>,
 }
 
 impl JwToken {
@@ -33,30 +36,23 @@ impl JwToken {
     
 
     pub fn new(user_id: i32) -> Self {
-        let config = Config::new();
-        let minutes = config.map.get("EXPIRE_MINUTES")
-                                .unwrap()
-                                .as_i64()
-                                .unwrap();
-        let expiration = Utc::now()
-                                .checked_add_signed(chrono::Duration::minutes(minutes))
-                                .expect("valid timestamp")
-                                .timestamp();
-        JwToken {
-            user_id,
-            exp: expiration as usize,
+        let timestamp   = Utc::now();
+        return JwToken {
+            user_id: user_id,
+            minted: timestamp,
         }
+
     }
 
-    pub fn from_token(token: String) -> Result<Self, String> {
+    pub fn from_token(token: String) -> Option<Self> {
         let key = DecodingKey::from_secret(JwToken::get_key().as_ref());
-        let token_result = decode::<JwToken>(&token, &key, &Validation::default());
+        let token_result = decode::<JwToken>(
+                                                                    &token, 
+                                                                    &key, 
+                                                                    &Validation::new(Algorithm::HS256));
         match token_result {
-            Ok(data) => Ok(data.claims),
-            Err(error) => {
-                let message = format!("{}", error);
-                Err(message)
-            }
+            Ok(data) => Some(data.claims),
+            Err(_) => None
         }
     }
  
@@ -73,17 +69,12 @@ impl FromRequest for JwToken {
                 let raw_token = data.to_str().unwrap().to_string();
                 let token_result = JwToken::from_token(raw_token);
                 match token_result {
-                    Ok(token) => {
-                        ok(token)
+                    Some(token) => {
+                        return ok(token)
                     },
-                    Err(message) => {
-                        if message == "ExpiredSignature".to_owned() {
-                            return err(ErrorUnauthorized("token expired"))
-                        }
-                        return err(ErrorUnauthorized("token can't be decoded"))
+                    None => return err(ErrorUnauthorized("token can't be decoded"))
                     }
-                }
-            },
+                },
             None => {
                 return err(ErrorUnauthorized("token not in header under key 'token'"))
             }

@@ -32,6 +32,9 @@ class App extends Component {
                 })
           }).catch(error => {
             if (error.response.status === 401) {
+                console.log("#######################################################");
+                console.log("Unauthorized");
+                console.log("#######################################################");
                 this.logout();
             }   
           });

@@ -5,7 +5,8 @@ class LoginForm extends Component {
     state = {
         username: "",
         password: "",
-        server_url: "https://automatic-space-umbrella-jggx9p6px57355qg-3000.app.github.dev/v1/auth/login"
+        //server_url: "https://automatic-space-umbrella-jggx9p6px57355qg-3000.app.github.dev/v1/auth/login"
+        server_url: "http://localhost:8000/v1/auth/login"
     }
 
     submitLogin = (e) => {
@@ -17,7 +18,8 @@ class LoginForm extends Component {
             }, 
             {
                 headers: {
-                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Origin": "localhost:3000",
+                    //"Origin": "localhost:3000",
                 }
             })
         .then((response) => {
