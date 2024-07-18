@@ -14,19 +14,7 @@ use std::collections::HashMap;
 
 
 //pub async fn login() -> HttpResponse {
-pub async fn login(credentials: web::Json<Login>, db: DB) -> impl Responder {
-    //return HttpResponse::Ok();
-    //  HttpResponse::Ok()
-    // .content_type("text/html; charset=utf-8")
-    // .body("<html>\
-    //        <head></head> 
-    //        <body> simple login view </body>
-    //         </html>"
-    // )
-    // println!("##########################################");
-    // println!("{:?}", credentials.username.clone());
-    // println!("##########################################");
-    let password = credentials.password.clone();
+pub async fn login(credentials: web::Json<Login>, db: DB) ->  HttpResponse {
     let users = users::table
         .filter(&users::columns::username.eq(credentials.username.clone()))
         .load::<User>(&db.connection).unwrap();
@@ -37,13 +25,18 @@ pub async fn login(credentials: web::Json<Login>, db: DB) -> impl Responder {
         return HttpResponse::Conflict().await.unwrap();
     }
 
-    match users[0].verify_password(password) {
+    match users[0].clone().verify_password(credentials.password.clone()) {
         true => {
-            let token = JwToken::new(users[0].id);
+            let user_id = users[0].id;
+            let token = JwToken::new(user_id);
             let raw_token = token.encode();
-            HttpResponse::Ok().append_header(("token", raw_token)).take().await.unwrap()
+            let response = LoginResponse {
+                token: raw_token.clone(),
+            };
+            let body = serde_json::to_string(&response).unwrap();
+            HttpResponse::Ok().append_header(("token", raw_token)).json(&body)
         },
-        false => HttpResponse::Unauthorized().await.unwrap()
+        false => HttpResponse::Unauthorized().finish() // converts HttpResponseBuilder to HttpResponse same as HttpResponse::Unauthorized().await.unwrap()
     }
 
 }

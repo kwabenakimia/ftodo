@@ -24,7 +24,7 @@ pub async fn create(token: JwToken, req: HttpRequest, db: DB) -> HttpResponse {
                             .unwrap();
 
     if items.len() == 0 {
-        let new_post = NewItem::new(title,1);
+        let new_post = NewItem::new(title,token.user_id);
         let _ = diesel::insert_into(to_do::table).values(&new_post)
             .execute(&db.connection);
     }

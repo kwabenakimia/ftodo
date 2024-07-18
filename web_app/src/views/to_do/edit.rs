@@ -11,7 +11,8 @@ use crate::database::DB;
 
 pub async fn edit(to_do_item: web::Json<ToDoItem>, token: JwToken, db: DB) -> HttpResponse {
     let results = to_do::table.filter(to_do::columns::title
-        .eq(&to_do_item.title));
+        .eq(&to_do_item.title))
+        .filter(to_do::columns::user_id.eq(&token.user_id));
 
     let _ = diesel::update(results)
         .set(to_do::columns::status.eq("DONE"))
