@@ -6,20 +6,20 @@ class LoginForm extends Component {
         username: "",
         password: "",
         //server_url: "https://automatic-space-umbrella-jggx9p6px57355qg-3000.app.github.dev/v1/auth/login"
-        server_url: "http://localhost:8000/v1/auth/login"
+        //server_url: "http://localhost:8000/v1/auth/login"
     }
 
     submitLogin = (e) => {
         e.preventDefault();
-        axios.post(this.state.server_url, 
+        axios.post("http://localhost:8000/v1/auth/login", 
+        //axios.get("http://localhost:8000/v1/auth/login", 
             { 
                 "username": this.state.username,
                 "password": this.state.password
             }, 
             {
                 headers: {
-                    "Access-Control-Allow-Origin": "localhost:3000",
-                    //"Origin": "localhost:3000",
+                    "Origin": "*",
                 }
             })
         .then((response) => {
