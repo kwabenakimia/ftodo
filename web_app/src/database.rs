@@ -10,8 +10,8 @@ use futures::future::{err, ok, Ready};
 use lazy_static::lazy_static;
 
 use diesel::{
-    r2d2::{ConnectionManager, Pool},
     pg::PgConnection,
+    r2d2::{ConnectionManager, Pool},
 };
 
 use crate::config::Config;
@@ -24,13 +24,19 @@ pub struct DbConnection {
 
 lazy_static! {
     pub static ref DBCONNECTION: DbConnection = {
-        let connection_string = Config::new().map.get("DB_URL").unwrap()
-        .as_str().unwrap().to_string();
-        
+        let connection_string = Config::new()
+            .map
+            .get("DB_URL")
+            .unwrap()
+            .as_str()
+            .unwrap()
+            .to_string();
+
         DbConnection {
-            db_connection: PgPool::builder().max_size(8)
-            .build(ConnectionManager::new(connection_string))
-            .expect("failed to create db connection_pool"), 
+            db_connection: PgPool::builder()
+                .max_size(8)
+                .build(ConnectionManager::new(connection_string))
+                .expect("failed to create db connection_pool"),
         }
     };
 }
@@ -44,7 +50,7 @@ pub struct DB {
 
 impl FromRequest for DB {
     type Error = Error;
-    type Future = Ready<Result<DB,Error>>;
+    type Future = Ready<Result<DB, Error>>;
 
     fn from_request(_: &HttpRequest, _: &mut Payload) -> Self::Future {
         match DBCONNECTION.db_connection.get() {

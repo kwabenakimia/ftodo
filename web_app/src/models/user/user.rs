@@ -1,7 +1,7 @@
 extern crate bcrypt;
 
-use diesel::{Queryable, Identifiable};
 use bcrypt::verify;
+use diesel::{Identifiable, Queryable};
 
 use crate::schema::users;
 
@@ -12,7 +12,7 @@ pub struct User {
     pub username: String,
     pub email: String,
     pub password: String,
-    pub unique_id: String
+    pub unique_id: String,
 }
 
 impl User {
