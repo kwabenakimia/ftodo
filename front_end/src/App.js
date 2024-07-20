@@ -17,12 +17,33 @@ class App extends Component {
   }
 
   getItems() {
-      axios.get("http://127.0.0.1:8000/v1/item/get",
+    let cachedData = Date.parse(localStorage.getItem("item-cache-date"));
+    let now = new Date();
+    let difference = Math.round((now - cachedData) / 1000);
+    if (difference <= 120) {
+        let pending_items = JSON.parse(localStorage.getItem("item-cache-data-pending"));
+        let done_items = JSON.parse(localStorage.getItem("item-cache-data-done"));
+        let pendingItemsCount = pending_items.length; 
+        let doneItemsCount = done_items.length;
+        this.setState({
+            "pending_items": this.processItemValues(pending_items),
+            "done_items": this.processItemValues(done_items),
+            "pending_items_count": pendingItemsCount,
+            "done_items_count": doneItemsCount
+        })
+    }
+
+    else {
+        axios.get("http://127.0.0.1:8000/v1/item/get",
           {headers: {"token": localStorage.getItem("user-token")}})
           .then(response => {
 
               let pending_items = response.data["pending_items"]
               let done_items = response.data["done_items"]
+
+              localStorage.setItem("item-cache-date", new Date());
+              localStorage.setItem("item-cache-data-pending", JSON.stringify(pending_items));
+              localStorage.setItem("item-cache-data-done", JSON.stringify(done_items));
 
               this.setState({
                     "pending_items": this.processItemValues(pending_items),
@@ -37,6 +58,7 @@ class App extends Component {
                 this.logout();
             }   
           });
+    }
   }
 
   logout() {
@@ -79,6 +101,10 @@ class App extends Component {
   handleReturnedState = (response) => {
       let pending_items = response.data["pending_items"]
       let done_items = response.data["done_items"]
+
+      localStorage.setItem("item-cache-date", new Date());
+      localStorage.setItem("item-cache-data-pending", JSON.stringify(pending_items));
+      localStorage.setItem("item-cache-data-done", JSON.stringify(done_items));
 
       this.setState({
           "pending_items": this.processItemValues(pending_items),
