@@ -62,6 +62,7 @@ impl FromRequest for JwToken {
     type Future = Ready<Result<JwToken, Error>>;
 
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
+        println!("req.headers : {:?}", req.headers());
         match req.headers().get("token") {
             Some(data) => {
                 let raw_token = data.to_str().unwrap().to_string();

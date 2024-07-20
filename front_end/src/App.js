@@ -31,6 +31,8 @@ class App extends Component {
                     "done_items_count": response.data["done_item_count"]
                 })
           }).catch(error => {
+            console.log("Error in getItems");
+            console.log(this.state.login_status);
             if (error.response.status === 401) {
                 this.logout();
             }   
@@ -43,14 +45,18 @@ class App extends Component {
   }
 
   componentDidMount() {
+    console.log("componentDidMount::this.state.login_status: " + this.state.login_status);
     let token = localStorage.getItem("user-token");
-    if (token !== null) {
+    //if (token !== null) {
+    if (!!token) {
+        console.log("token is not null");
         this.setState({login_status: true});
         this.getItems();
     }
   }
 
   handleLogin = (token) => {
+    console.log("handleLogin::token: " + token);
     localStorage.setItem("user-token", token);
     this.setState({login_status: true});
     this.getItems();

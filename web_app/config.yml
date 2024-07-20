@@ -1,3 +1,4 @@
 DB_URL: postgres://sophia:daemon@localhost:5433/to_do
-EXPIRE_MINUTES: 30
+EXPIRE_MINUTES: 120 
 SECRET_KEY: secret
+REDIS_URL: redis://127.0.0.1/

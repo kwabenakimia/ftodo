@@ -8,9 +8,10 @@ use std::sync::Arc;
 use actix_cors::Cors;
 use actix_service::Service;
 use actix_web::http::header;
-use actix_web::{App, HttpResponse, HttpServer};
+use actix_web::{App, HttpResponse, HttpServer, middleware::Logger};
 use diesel::result;
 use futures::future::{ok, Either};
+mod counter;
 
 mod database;
 mod json_serialization;
@@ -23,27 +24,42 @@ mod views;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     const ALLOWED_VERSION: &'static str = include_str!("./output_data.txt");
+    let site_counter = counter::Counter{value: 0};
+
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+
+    println!("main.rs::header::CONTENT_TYPE=: {:?}", header::CONTENT_TYPE);
+
     HttpServer::new(|| {
-        let cors = Cors::default()
-            .allowed_origin("http://localhost:3000")
-            //.allowed_origin("http://localhost:3000")
-            //.allowed_origin("http://127.0.0.1:3000")
-            //.allowed_origin("https://automatic-space-umbrella-jggx9p6px57355qg-3000.app.github.dev")
-            //.allowed_origin("*")
-            .allowed_methods(vec!["GET", "POST"])
-            .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
-            .allowed_header(header::CONTENT_TYPE)
-            .max_age(3600);
-        // .allow_any_origin()
-        // .allow_any_method()
-        // .allow_any_header();
+        // let cors = Cors::default()
+        //     .allowed_origin("http://localhost:3000")
+        //     .allowed_methods(vec!["GET", "POST"])
+        //     .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+        //     .allowed_header(header::X_CONTENT_TYPE_OPTIONS)
+        //     .allowed_header(header::CONTENT_TYPE)
+            //.allowed_header(header::CONTENT_TYPE)
+            //.allow_any_origin()
+            //.allow_any_method()
+            //.allow_any_header()
+            //.max_age(3600);
+        //let cors = Cors::permissive();
+        let cors = Cors::permissive().supports_credentials();
+        let site_counter = counter::Counter{value: 0};
+        site_counter.save();
+
         let app = App::new()
             .wrap_fn(|req, srv| {
                 let passed: bool;
+
+                let mut site_counter = counter::Counter::load().unwrap();   
+                site_counter.value += 1;
+                println!("{:?}", &site_counter);
+                site_counter.save();
+
                 if req.path().contains(&format!("/{}", ALLOWED_VERSION)) {
-                    passed = false;
-                } else {
                     passed = true;
+                } else {
+                    passed = false;
                 }
 
                 let end_result = match passed {
@@ -59,7 +75,8 @@ async fn main() -> std::io::Result<()> {
                 }
             })
             .configure(views::views_factory)
-            .wrap(cors);
+            .wrap(cors)
+            .wrap(Logger::new("%a %{User-Agent}i %r %s %D"));
         return app;
     })
     .bind("127.0.0.1:8000")?

@@ -10,3 +10,8 @@ services:
       - 'POSTGRES_USER=sophia'
       - 'POSTGRES_DB=to_do'
       - 'POSTGRES_PASSWORD=daemon'
+  redis:
+    container_name: 'to-do-redis'
+    image: 'redis:5.0.5'
+    ports:
+      - '6379:6379'

@@ -19,12 +19,22 @@ class LoginForm extends Component {
             }, 
             {
                 headers: {
-                    "Origin": "*",
+                    //"Access-Control-Allow-Origin": "http://localhost:3000",
+                    //"X-Content-Type-Options": "nosniff",
+                    //"Access-Control-Allow-Origin": "localhost:3000",
+                    //"X-Content-Type": "utf-8",
+                    //"Access-Control-Request-Method": "*",
                 }
             })
         .then((response) => {
             this.setState({ username: "", password: "" });
-            this.props.handleLogin(response.data["token"]);
+            //console.log("LoginForm::response.data: " + response.data);
+            //console.log("LoginForm::response.data['token']: " + response.data["token"]);
+            //console.log("LoginForm::response['data']: " + response["data"]);
+            //console.log("LoginForm::response['data']['token']: " + response["data"]["token"]);
+
+            //this.props.handleLogin(response.data["token"]);
+            this.props.handleLogin(response.headers["token"]);
         })
         .catch((error) => {
             alert(error);
