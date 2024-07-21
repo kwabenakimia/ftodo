@@ -43,7 +43,9 @@ async fn main() -> std::io::Result<()> {
             //.allow_any_header()
             //.max_age(3600);
         //let cors = Cors::permissive();
-        let cors = Cors::permissive().supports_credentials();
+        let cors = Cors::permissive()
+            .supports_credentials();
+            //.allowed_header(header::X_CONTENT_TYPE_OPTIONS);
         let site_counter = counter::Counter{value: 0};
         site_counter.save();
 

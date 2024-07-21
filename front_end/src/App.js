@@ -67,11 +67,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log("componentDidMount::this.state.login_status: " + this.state.login_status);
+    //console.log("componentDidMount::this.state.login_status: " + this.state.login_status);
     let token = localStorage.getItem("user-token");
     //if (token !== null) {
-    if (!!token) {
-        console.log("token is not null");
+    if (!!token) { // if token is undefined we get false
         this.setState({login_status: true});
         this.getItems();
     }
