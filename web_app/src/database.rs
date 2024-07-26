@@ -1,4 +1,3 @@
-use diesel::prelude::*;
 use diesel::r2d2::PooledConnection;
 
 use actix_web::dev::Payload;
@@ -39,9 +38,6 @@ lazy_static! {
                 .expect("failed to create db connection_pool"),
         }
     };
-}
-pub fn establish_connection() -> PooledConnection<ConnectionManager<PgConnection>> {
-    DBCONNECTION.db_connection.get().unwrap()
 }
 
 pub struct DB {

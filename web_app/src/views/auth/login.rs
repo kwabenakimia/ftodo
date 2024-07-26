@@ -1,7 +1,7 @@
 use crate::diesel;
 use crate::json_serialization::login_response::LoginResponse;
 use crate::schema::users;
-use actix_web::{web, HttpResponse, HttpResponseBuilder, Responder};
+use actix_web::{web, HttpResponse};
 use diesel::prelude::*;
 
 use crate::database::DB;
@@ -9,7 +9,6 @@ use crate::json_serialization::login::Login;
 use crate::jwt::JwToken;
 use crate::models::user::user::User;
 
-use std::collections::HashMap;
 
 //pub async fn login() -> HttpResponse {
 pub async fn login(credentials: web::Json<Login>, db: DB) -> HttpResponse {

@@ -1,4 +1,3 @@
-use actix_web::cookie::time::Date;
 use actix_web::dev::Payload;
 use actix_web::error::ErrorUnauthorized;
 use actix_web::{Error, FromRequest, HttpRequest};

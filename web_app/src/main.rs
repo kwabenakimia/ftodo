@@ -21,7 +21,7 @@ mod views;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     const ALLOWED_VERSION: &'static str = include_str!("./output_data.txt");
-    let site_counter = counter::Counter{value: 0};
+    //let site_counter = counter::Counter{value: 0};
 
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
@@ -43,8 +43,8 @@ async fn main() -> std::io::Result<()> {
         let cors = Cors::permissive()
             .supports_credentials();
             //.allowed_header(header::X_CONTENT_TYPE_OPTIONS);
-        // let site_counter = counter::Counter{value: 0};
-        // site_counter.save();
+        let site_counter = counter::Counter{value: 0};
+        _ = site_counter.save();
 
        //const outcome : &str = "test";
 
@@ -53,10 +53,10 @@ async fn main() -> std::io::Result<()> {
                 //println!("{}", outcome);
                 let passed: bool;
 
-                // let mut site_counter = counter::Counter::load().unwrap();   
-                // site_counter.value += 1;
-                // println!("{:?}", &site_counter);
-                // site_counter.save();
+                let mut site_counter = counter::Counter::load().unwrap();   
+                site_counter.value += 1;
+                println!("{:?}", &site_counter);
+                _ = site_counter.save();
 
                 if req.path().contains(&format!("/{}", ALLOWED_VERSION)) {
                     passed = true;
