@@ -3,13 +3,10 @@ extern crate diesel;
 extern crate dotenv;
 mod config;
 
-use std::sync::Arc;
-
 use actix_cors::Cors;
 use actix_service::Service;
 use actix_web::http::header;
 use actix_web::{App, HttpResponse, HttpServer, middleware::Logger};
-use diesel::result;
 use futures::future::{ok, Either};
 mod counter;
 
@@ -46,17 +43,20 @@ async fn main() -> std::io::Result<()> {
         let cors = Cors::permissive()
             .supports_credentials();
             //.allowed_header(header::X_CONTENT_TYPE_OPTIONS);
-        let site_counter = counter::Counter{value: 0};
-        site_counter.save();
+        // let site_counter = counter::Counter{value: 0};
+        // site_counter.save();
+
+       //const outcome : &str = "test";
 
         let app = App::new()
             .wrap_fn(|req, srv| {
+                //println!("{}", outcome);
                 let passed: bool;
 
-                let mut site_counter = counter::Counter::load().unwrap();   
-                site_counter.value += 1;
-                println!("{:?}", &site_counter);
-                site_counter.save();
+                // let mut site_counter = counter::Counter::load().unwrap();   
+                // site_counter.value += 1;
+                // println!("{:?}", &site_counter);
+                // site_counter.save();
 
                 if req.path().contains(&format!("/{}", ALLOWED_VERSION)) {
                     passed = true;

@@ -14,3 +14,17 @@ impl Done {
         return Done { super_struct: base };
     }
 }
+
+mod done_tests {
+    use super::Done;
+    use super::super::base::Base;
+    use super::super::super::enums::TaskStatus;
+
+    #[test]
+    fn new() {
+        let new_done_struct = Done::new("test_title");
+
+        assert_eq!(new_done_struct.super_struct.title, String::from("test_title"));
+        assert_eq!(new_done_struct.super_struct.status, TaskStatus::DONE);
+    }
+}

@@ -1,0 +1,214 @@
+{
+	"info": {
+		"_postman_id": "04cc7dd6-22d7-4bba-bf37-9ae8f8d27527",
+		"name": "ftodo_items",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "37172609"
+	},
+	"item": [
+		{
+			"name": "1_create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var result = pm.response.json();\r",
+							"\r",
+							"pm.test(\"response is ok\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"returns one pending item\", function() {\r",
+							"    if (result[\"pending_items\"].length !== 1) {\r",
+							"        throw new Error(\"returns the wrong number of pending items\");\r",
+							"    }\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Pending item has the correct status\", function () {\r",
+							"    console.log(result[\"pending_items\"]);\r",
+							"    if (result[\"pending_items\"][0].status.status !== 'PENDING') {\r",
+							"        throw new Error(\"status of the pending item is not 'PENDING'\");\r",
+							"    }\r",
+							"})\r",
+							"\r",
+							"pm.test(\"returns zero done items\", function () {\r",
+							"    if (result[\"done_items\"].length !== 0) {\r",
+							"        throw new Error (\"returns the wrong number of done items\");\r",
+							"    }\r",
+							"})\r",
+							"\r",
+							"pm.test(\"checking pending item count\", function() {\r",
+							"    if (result[\"pending_item_count\"] !== 1) {\r",
+							"        throw new Error(\"pending item pending_item_count needs to be one\");\r",
+							"    }\r",
+							"})\r",
+							"\r",
+							"pm.test(\"checking done item count\", function() {\r",
+							"    if (result[\"done_item_count\"] !== 0){\r",
+							"        throw new Error(\"done_item_count needs to be zero\");\r",
+							"    }\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": {
+						"value": "{{Token}}",
+						"key": "token"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"kimia\",\r\n    \"password\": \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://127.0.0.1:8000/v1/item/create/learn_to_forgive"
+			},
+			"response": []
+		},
+		{
+			"name": "2_create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var result = pm.response.json();\r",
+							"\r",
+							"pm.test(\"response is ok\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"})\r",
+							"\r",
+							"pm.test(\"returns 2 pending items\", function () {\r",
+							"    if (result['pending_items'].length !== 2) {\r",
+							"        return new Error('the number of items is not correct')\r",
+							"    }\r",
+							"})\r",
+							"\r",
+							"pm.test(\"The title of the first item is correct\", function() {\r",
+							"    if (result['pending_items'][0].title !== \"learn_to_forgive\") {\r",
+							"        throw new Error(\"The name of the item is not correct\");\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The status of the first item is correct\", function() {\r",
+							"    if (result['pending_items'][0].status.status !== 'PENDING'){\r",
+							"        throw new Error(\"the status of the first item is not PENDING\")\r",
+							"    }\r",
+							"})\r",
+							"\r",
+							"pm.test(\"The title of the second item is correct\", function() {\r",
+							"    if (result['pending_items'][1].title !== \"learn_to_exist\") {\r",
+							"        throw new Error(\"The name of the second item is not learn_to_exist\");\r",
+							"    }\r",
+							"})\r",
+							"\r",
+							"pm.test(\"The title of the first item is correct\", function() {\r",
+							"    if (result['pending_items'][0].title !== \"learn_to_forgive\") {\r",
+							"        throw new Error(\"The name of the item is not learn_to_forgive\");\r",
+							"    }\r",
+							"})\r",
+							"\r",
+							"\r",
+							"pm.test(\"The status of the second item is correct\", function() {\r",
+							"    if (result['pending_items'][1].status.status !== 'PENDING'){\r",
+							"        throw new Error(\"the status of the second item is not PENDING\")\r",
+							"    }\r",
+							"})\r",
+							"\r",
+							"pm.test(\"returns zero done items\", function () {\r",
+							"     if (result['done_items'].length !== 0) {\r",
+							"        throw new Error('the done items count is not zero')\r",
+							"     }\r",
+							"})\r",
+							"\r",
+							"pm.test(\"returns two pending items\", function () {\r",
+							"     if (result['done_items'].length !== 2) {\r",
+							"        throw new Error('the pending items length is not zero')\r",
+							"     }\r",
+							"})\r",
+							"\r",
+							"pm.test('checking pending item count', function () {\r",
+							"    if (result['pending_item_count'] !== 2) {\r",
+							"        throw new Error('the pending_item_count is not 2')\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"pm.test('checking done item count', function () {\r",
+							"    if (result['done_item_count'] !== 0 ) {\r",
+							"        throw new Error('the done_item_count is not 0')\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": {
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo1LCJleHAiOjE3MjE5NDQ2MzZ9.XndI0K0V9jt-MwUQK9OqJG8yz-ug1XKrwEMFvRVNIms",
+						"key": "token"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"kimia\",\r\n    \"password\": \"test\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://127.0.0.1:8000/v1/item/create/learn_to_exist"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "Token",
+			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9"
+		},
+		{
+			"key": "token",
+			"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo1LCJleHAiOjE3MjE4NDg0MzN9.WozL6YvfyG3xz04cl4KDf2wwOeKpkfsCpAtLImJByyI"
+		}
+	]
+}

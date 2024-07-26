@@ -1,0 +1,20 @@
+localhost:5433 - accepting connections
+
+running 10 tests
+test jwt::jwt_tests::get_exp ... ok
+test jwt::jwt_tests::get_key ... ok
+test jwt::jwt_tests::decode_incorrect_token ... ok
+test to_do::structs::base::base_tests::new ... ok
+test to_do::structs::done::done_tests::new ... ok
+test to_do::structs::pending::pending_tests::new ... ok
+test jwt::jwt_tests::encode_decode ... ok
+test jwt::jwt_tests::test_no_token_request ... ok
+test jwt::jwt_tests::test_false_token_request ... ok
+test jwt::jwt_tests::test_passing_token_request ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+main.rs::header::CONTENT_TYPE=: "content-type"
+Reading config file: config.yml
+Reading config file: config.yml
+Reading config file: config.yml

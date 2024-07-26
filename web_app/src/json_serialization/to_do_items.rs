@@ -1,7 +1,6 @@
 use crate::diesel;
 use diesel::prelude::*;
 
-use crate::database::establish_connection;
 use crate::models::item::item::Item;
 use crate::schema::to_do;
 

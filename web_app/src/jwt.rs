@@ -8,9 +8,7 @@ use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, 
 use serde::{Deserialize, Serialize};
 
 use crate::config::Config;
-use chrono::serde::ts_seconds;
-use chrono::{DateTime, Utc};
-use uuid::timestamp;
+use chrono::Utc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct JwToken {
@@ -62,7 +60,6 @@ impl FromRequest for JwToken {
     type Future = Ready<Result<JwToken, Error>>;
 
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
-        println!("req.headers : {:?}", req.headers());
         match req.headers().get("token") {
             Some(data) => {
                 let raw_token = data.to_str().unwrap().to_string();
@@ -80,4 +77,107 @@ impl FromRequest for JwToken {
             None => return err(ErrorUnauthorized("token not in header under key 'token'")),
         }
     }
+}
+
+#[cfg(test)]
+mod jwt_tests {
+    use std::str::FromStr;
+    use super::{JwToken, Config};
+    use actix_web::{HttpRequest, HttpResponse, test::TestRequest, web, App};
+    use actix_web::http::header::{self, ContentType, HeaderName, HeaderValue};
+    use actix_web::test::{init_service, call_service};
+    use actix_web;
+    use serde_json::json;
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Debug, Serialize, Deserialize)]
+    pub struct ResponseFromTest {
+        pub user_id: i32,
+        pub exp_minutes: i32,
+    }
+
+    #[test]
+    fn get_key() {
+        assert_eq!(String::from("secret"), JwToken::get_key());
+    }
+
+    #[test]
+    fn get_exp() {
+        let config = Config::new();
+        let minutes = config.map.get("EXPIRE_MINUTES").unwrap().as_i64().unwrap();
+        assert_eq!(120, minutes);
+    }
+
+    #[test]
+    fn decode_incorrect_token() {
+        let encoded_token: String = String::from("InvalidToken");
+        match JwToken::from_token(encoded_token) {
+            Err(message)=> assert_eq!("InvalidToken", message),
+            _ => panic!("Incorrect token should tot be able to be encoded"),
+        }
+    }
+
+    #[test]
+    fn encode_decode() {
+        let test_token = JwToken::new(5);
+        let encoded_token = test_token.encode();
+        let new_token = JwToken::from_token(encoded_token).unwrap();
+        assert_eq!(5, new_token.user_id);
+    }
+
+     async fn test_handler(token: JwToken, _: HttpRequest) -> HttpResponse {
+        return HttpResponse::Ok().json(json!({
+            "user_id": token.user_id,
+            "exp_minutes": 60,
+        }));
+     }
+
+    #[actix_web::test]
+    async fn test_no_token_request() {
+        let app = init_service( App::new().route( "/", web::get().to(test_handler))).await;
+
+        let req = TestRequest::default()
+            .insert_header(ContentType::plaintext())
+            .to_request();
+        let resp = call_service(&app, req).await;
+        assert_eq!("401", resp.status().as_str())
+    }
+
+    #[actix_web::test]
+    async fn test_passing_token_request() {
+        let test_token = JwToken::new(5);
+        let encoded_token = test_token.encode();
+
+        let app = init_service( App::new().route( "/", web::get().to(test_handler))).await;
+
+        let mut req = TestRequest::default()
+        .insert_header(ContentType::plaintext())
+        .to_request();
+
+        let header_name = HeaderName::from_str("token").unwrap();
+
+        let header_value = HeaderValue::from_str(&encoded_token.as_str()).unwrap();
+
+        req.headers_mut().insert(header_name, header_value);
+
+        let resp: ResponseFromTest = actix_web::test::call_and_read_body_json(&app, req).await;
+
+        assert_eq!(5, resp.user_id);
+
+    }
+
+    #[actix_web::test]
+    async fn test_false_token_request() {
+        let app = init_service(App::new().route("/", web::get().to(test_handler))).await;
+        let mut req = TestRequest::default()
+            .insert_header(ContentType::plaintext())
+            .to_request();
+        let header_name = HeaderName::from_str("token").unwrap();
+        let header_value = HeaderValue::from_str("test").unwrap();
+        req.headers_mut().insert(header_name, header_value);
+
+        let resp = call_service(&app, req).await;
+        assert_eq!("401", resp.status().as_str());
+    }
+
 }

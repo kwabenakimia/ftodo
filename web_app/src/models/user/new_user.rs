@@ -1,6 +1,5 @@
 use bcrypt::{hash, DEFAULT_COST};
 use diesel::Insertable;
-use serde::de;
 use uuid::Uuid;
 
 use crate::schema::users;
