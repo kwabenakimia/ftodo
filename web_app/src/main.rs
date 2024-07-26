@@ -43,8 +43,8 @@ async fn main() -> std::io::Result<()> {
         let cors = Cors::permissive()
             .supports_credentials();
             //.allowed_header(header::X_CONTENT_TYPE_OPTIONS);
-        let site_counter = counter::Counter{value: 0};
-        _ = site_counter.save();
+            //let site_counter = counter::Counter{value: 0};
+            //_ = site_counter.save();
 
        //const outcome : &str = "test";
 
@@ -53,10 +53,10 @@ async fn main() -> std::io::Result<()> {
                 //println!("{}", outcome);
                 let passed: bool;
 
-                let mut site_counter = counter::Counter::load().unwrap();   
-                site_counter.value += 1;
-                println!("{:?}", &site_counter);
-                _ = site_counter.save();
+                //let mut site_counter = counter::Counter::load().unwrap();   
+                //site_counter.value += 1;
+                //println!("{:?}", &site_counter);
+                // _ = site_counter.save();
 
                 if req.path().contains(&format!("/{}", ALLOWED_VERSION)) {
                     passed = true;

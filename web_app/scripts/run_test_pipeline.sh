@@ -63,4 +63,3 @@ kill $SERVER_PID
 
 cd ..
 docker-compose down
-
