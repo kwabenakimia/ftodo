@@ -5,8 +5,10 @@ SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
 cd $SCRIPTPATH
 cd ..
 
+echo "Current directory: $(pwd) before echo PATH"
+
 # spin up docker and hold script until accepting connections
-docker-compose up -d
+docker compose up -d
 until pg_isready -h localhost -p 5433 -U sophia
 do
   echo "Waiting for postgres"
@@ -25,9 +27,11 @@ SERVER_PID=$!
 sleep 5
 
 # run our migrations
+echo "Current directory: $(pwd)"
 diesel migration run
 
 # move back to the scripts directory ??
+cd $SCRIPTPATH
 
 # create the user (thru postman>code generator>curl)
 curl --location 'http://127.0.0.1:8000/v1/user/create' \
@@ -39,22 +43,25 @@ curl --location 'http://127.0.0.1:8000/v1/user/create' \
 }'
 
 # login getting a fresh token
-echo $(curl --location --request GET 'http://localhost:8000/v1/auth/login' \
+curl --location --request GET 'http://localhost:8000/v1/auth/login' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "username": "daemon",
     "password": "test"
-    }') > ./fresh_token.json
+    }' | jq -r '.' > ./fresh_token.json
 
 # insert the fresh token into the Newman data and run the Newman API tests
 TOKEN=$(jq '.token' fresh_token.json)
-jq '.auth.apikey[0].value = '"$TOKEN"'' \
-ftodo_items.postman_collection.json > test_newman.json
+#jq '.auth.apikey[0].value = '"$TOKEN"'' \
+#ftodo_items.postman_collection_create_1_and_2.json > test_newman.json
+python3 ready_newman.py
 
+echo "Current directory: $(pwd)"
 newman run test_newman.json
 
 # our testing is done. We can clean up  the files created when running the tests, destroy
 # the docker container and stop our server running with the following code
+
 rm ./fresh_token.json
 rm ./test_newman.json
 
@@ -62,4 +69,4 @@ rm ./test_newman.json
 kill $SERVER_PID
 
 cd ..
-docker-compose down
+docker compose down

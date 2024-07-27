@@ -145,7 +145,7 @@
 							"})\r",
 							"\r",
 							"pm.test(\"returns two pending items\", function () {\r",
-							"     if (result['done_items'].length !== 2) {\r",
+							"     if (result['pending_items'].length !== 2) {\r",
 							"        throw new Error('the pending items length is not zero')\r",
 							"     }\r",
 							"})\r",

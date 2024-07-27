@@ -15,10 +15,10 @@ impl Done {
     }
 }
 
+#[cfg(test)]
 mod done_tests {
-    
-    
-    
+    use super::TaskStatus;
+    use super::Done;
 
     #[test]
     fn new() {

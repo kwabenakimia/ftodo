@@ -1,12 +1,15 @@
+Current directory: /home/kimia/dvpt/ollaf/ftodo/web_app before echo PATH
+localhost:5433 - no response
+Waiting for postgres
 localhost:5433 - accepting connections
 
 running 10 tests
+test to_do::structs::base::base_tests::new ... ok
 test jwt::jwt_tests::get_exp ... ok
 test jwt::jwt_tests::get_key ... ok
 test jwt::jwt_tests::decode_incorrect_token ... ok
-test to_do::structs::base::base_tests::new ... ok
-test to_do::structs::done::done_tests::new ... ok
 test to_do::structs::pending::pending_tests::new ... ok
+test to_do::structs::done::done_tests::new ... ok
 test jwt::jwt_tests::encode_decode ... ok
 test jwt::jwt_tests::test_no_token_request ... ok
 test jwt::jwt_tests::test_false_token_request ... ok
@@ -15,6 +18,66 @@ test jwt::jwt_tests::test_passing_token_request ... ok
 test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
 main.rs::header::CONTENT_TYPE=: "content-type"
+Current directory: /home/kimia/dvpt/ollaf/ftodo/web_app
+Running migration 2024-07-13-153731_create_to_do_items
+Running migration 2024-07-14-044809_create_users
 Reading config file: config.yml
 Reading config file: config.yml
 Reading config file: config.yml
+Current directory: /home/kimia/dvpt/ollaf/ftodo/web_app/scripts
+newman
+
+ftodo_items
+
+→ 1_create
+  POST http://127.0.0.1:8000/v1/item/create/learn_to_forgive Reading config file: config.yml
+[200 OK, 408B, 47ms]
+  ✓  response is ok
+  ✓  returns one pending item
+  ┌
+  │ [
+  │   {
+  │     title: 'learn_to_forgive',
+  │     status: { status: 'PENDING' }
+  │   }
+  │ ]
+  └
+  ✓  Pending item has the correct status
+  ✓  returns zero done items
+  ✓  checking pending item count
+  ✓  checking done item count
+
+→ 2_create
+  POST http://127.0.0.1:8000/v1/item/create/learn_to_exist Reading config file: config.yml
+[200 OK, 465B, 10ms]
+  ✓  response is ok
+  ✓  returns 2 pending items
+  ✓  The title of the first item is correct
+  ✓  The status of the first item is correct
+  ✓  The title of the second item is correct
+  ✓  The title of the first item is correct
+  ✓  The status of the second item is correct
+  ✓  returns zero done items
+  ✓  returns two pending items
+  ✓  checking pending item count
+  ✓  checking done item count
+
+┌─────────────────────────┬───────────────────┬──────────────────┐
+│                         │          executed │           failed │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              iterations │                 1 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│                requests │                 2 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│            test-scripts │                 2 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│      prerequest-scripts │                 2 │                0 │
+├─────────────────────────┼───────────────────┼──────────────────┤
+│              assertions │                17 │                0 │
+├─────────────────────────┴───────────────────┴──────────────────┤
+│ total run duration: 126ms                                      │
+├────────────────────────────────────────────────────────────────┤
+│ total data received: 331B (approx)                             │
+├────────────────────────────────────────────────────────────────┤
+│ average response time: 28ms [min: 10ms, max: 47ms, s.d.: 18ms] │
+└────────────────────────────────────────────────────────────────┘
