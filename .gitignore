@@ -1,6 +1,8 @@
 # Fichiers de compilation de Rust
 web_app/target
 
+web_app/aws
+
 # Logs
 logs
 *.log

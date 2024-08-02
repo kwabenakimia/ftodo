@@ -20,7 +20,8 @@ mod views;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    const ALLOWED_VERSION: &'static str = include_str!("./output_data.txt");
+    //const ALLOWED_VERSION: &'static str = include_str!("./output_data.txt");
+    const ALLOWED_VERSION: &'static str = "v1"; // modify to build with docker
     //let site_counter = counter::Counter{value: 0};
 
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
