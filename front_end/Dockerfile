@@ -1,10 +1,10 @@
 FROM node:18.17.1
 
-WORKDIR .
-COPY . ./
+COPY . /app
+WORKDIR /app 
 
 RUN npm install -g serve
-RUN npm isntall
+RUN npm install
 RUN npm run react-build
 
 EXPOSE 4000

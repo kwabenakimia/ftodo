@@ -3,8 +3,8 @@ FROM rust:1.79
 RUN apt-get update -yqq && apt-get install -yqq cmake g++
 RUN cargo install diesel_cli --no-default-features --features postgres
 
-COPY . .
-WORKDIR .
+COPY . /app 
+WORKDIR /app 
 
 RUN cargo clean
 RUN cargo build --release
